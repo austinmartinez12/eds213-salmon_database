@@ -22,43 +22,23 @@ CREATE TABLE diet (
     scalelabel VARCHAR,
     length DOUBLE,
     weight DOUBLE,
-    odonata BIGINT,
     net_wt_odonata DOUBLE,
-    ephemeroptera BIGINT,
     net_wt_ephemeroptera DOUBLE,
-    crayfish BIGINT,
     net_wt_crayfish DOUBLE,
-    fish BIGINT,
     net_wt_fish DOUBLE,
-    smelt BIGINT,
     net_wt_smelt DOUBLE,
-    bluntnose BIGINT,
     net_wt_bluntnose DOUBLE,
-    mimicshiner BIGINT,
     net_wt_mimicshiner DOUBLE,
-    other_fish BIGINT,
     net_wt_other_fish DOUBLE,
-    diptera BIGINT,
     net_wt_diptera DOUBLE,
-    trichoptera BIGINT,
     net_wt_trichoptera DOUBLE,
-    hemiptera BIGINT,
     net_wt_hemiptera DOUBLE,
-    cladocera BIGINT,
     net_wt_cladocera DOUBLE,
-    hydrocarina BIGINT,
     net_wt_hydrocarina DOUBLE,
-    coleopterans BIGINT,
     net_wt_coleopterans DOUBLE,
-    amphipod BIGINT,
     net_wt_amphipod DOUBLE,
-    emergent_aquatics BIGINT,
     net_wt_emergent_aquatics DOUBLE,
-    terrestrial_inverts BIGINT,
     net_wt_terrestrial_inverts DOUBLE,
-    other BIGINT,
-    net_wt_other DOUBLE,
-    notes VARCHAR,
     FOREIGN KEY (scalelabel) REFERENCES predator_fish(scalelabel)
 );
 INSERT INTO diet
@@ -73,11 +53,11 @@ CREATE TABLE prey_fish (
     preyspecies VARCHAR,
     preylength DOUBLE,
     count BIGINT,
-    id BIGINT PRIMARY KEY,
     FOREIGN KEY (gutlabel) REFERENCES diet(gutlabel)
 );
 INSERT INTO prey_fish
-SELECT * FROM read_csv('data/clean_data/fish.csv', header=true, quote='"', types={'sampledate': 'DATE'});
+SELECT * FROM read_csv('data/clean_data/fish.csv', header=true, quote='"', types={'sampledate': 'DATE'})
+WHERE gutlabel IN (SELECT gutlabel FROM diet); -- Only insert prey rows whose gutlabels exist in diet because not all fish had gut contents sampled.
 
 -- 4. Biocomplexity: Coordinated Field Studies: Predator Fish Prey Data - CrayFish
 CREATE TABLE prey_crayfish (
@@ -91,8 +71,8 @@ CREATE TABLE prey_crayfish (
     sex VARCHAR,
     state VARCHAR,
     count BIGINT,
-    id BIGINT PRIMARY KEY,
     FOREIGN KEY (gutlabel) REFERENCES diet(gutlabel)
 );
 INSERT INTO prey_crayfish
-SELECT * FROM read_csv('data/clean_data/crayfish.csv', header=true, quote='"', types={'sampledate': 'DATE'});
+SELECT * FROM read_csv('data/clean_data/crayfish.csv', header=true, quote='"', types={'sampledate': 'DATE'})
+WHERE gutlabel IN (SELECT gutlabel FROM diet); -- Filter to gutlabels present in diet since some crayfish prey records have no matching diet entry.
